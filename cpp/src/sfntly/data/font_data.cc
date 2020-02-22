@@ -34,7 +34,7 @@ void FontData::Bound(int32_t offset, int32_t length) {
   CHECK(length >= 0);
 
   // Check to make sure |bound_offset_| will not overflow.
-  CHECK(bound_offset_ <= std::numeric_limits<int32_t>::max() - offset);
+  CHECK(bound_offset_ <= INT_MAX - offset);
   const int32_t new_offset = bound_offset_ + offset;
 
   if (length == GROWABLE_SIZE) {

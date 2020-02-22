@@ -169,7 +169,7 @@ void WritableFontData::CopyFrom(InputStream* is) {
 CALLER_ATTACH FontData* WritableFontData::Slice(int32_t offset,
                                                 int32_t length) {
   if (offset < 0 || length < 0 ||
-      offset > std::numeric_limits<int32_t>::max() - length ||
+      offset > INT_MAX - length ||
       offset + length > Size()) {
 #if !defined (SFNTLY_NO_EXCEPTION)
     throw IndexOutOfBoundsException(

@@ -18,13 +18,15 @@ endif(GCC_OR_CLANG)
 
   set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/lib)
   set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src ext/gtest/include ext/gtest
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/sample ${CMAKE_CURRENT_SOURCE_DIR}/src/sample/subtly)
+  include_directories(
+	${CMAKE_CURRENT_SOURCE_DIR}/src ext/gtest/include ext/gtest
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sample 
+	${CMAKE_CURRENT_SOURCE_DIR}/src/sample/subtly)
 
 # The following simulates Chrome compilation flags
   add_definitions(-DSFNTLY_NO_EXCEPTION)
 if(GCC_OR_CLANG)
-  add_definitions(-D__wur=__attribute__\(\(warn_unused_result\)\) -Wall -Werror -fno-exceptions)
+  #add_definitions(-D__wur=__attribute__\(\(warn_unused_result\)\) -Wall -Werror -fno-exceptions)
 endif(GCC_OR_CLANG)
 
 # Use STL for TinyXML library
@@ -34,7 +36,7 @@ endif(GCC_OR_CLANG)
   add_definitions(-DSFNTLY_EXPERIMENTAL)
 
 # VC specific flags
-if(MSVC10 OR MSVC90)
+if(MSVC)
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi /nologo /W4 /WX /O2 /Ob2 /Oy /GF /Gm- /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /GR-")
   set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Zi /nologo /W4 /WX /Od /Oy- /RTC1 /MTd /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /GR-")
   add_definitions(-D_UNICODE -DUNICODE)

@@ -50,7 +50,7 @@ const int32_t kMaxTableSize = 200 * 1024 * 1024;
 
 bool IsValidHeaderRegion(int32_t data_length, int32_t offset, int32_t length) {
   return offset >= 0 && length >= 0 &&
-         offset <= std::numeric_limits<int32_t>::max() - length &&
+         offset <= INT_MAX - length &&
          offset + length <= data_length;
 }
 
