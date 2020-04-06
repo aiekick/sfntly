@@ -1,3 +1,8 @@
+# Cpp version
+
+I use and fix somethings only in cpp version for my Soft ImGuiFontStudio
+forked from https://github.com/rillig/sfntly
+
 # sfntly
 
 sfntly is pronounced "ess-font-lee."
