@@ -1,6 +1,7 @@
 # Cpp version
 
-I use and fix somethings only in cpp version for my Soft ImGuiFontStudio
+I use and fix somethings only in cpp version for my Soft [ImGuiFontStudio](https://github.com/aiekick/ImGuiFontStudio)
+
 forked from https://github.com/rillig/sfntly
 
 # sfntly
