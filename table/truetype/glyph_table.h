@@ -33,10 +33,12 @@ struct GlyphType {
 };
 
 class GlyphTable : public SubTableContainerTable,
-                   public RefCounted<GlyphTable> {
+                   public RefCounted<GlyphTable> 
+{
  public:
   class Builder;
-  class Glyph : public SubTable {
+  class Glyph : public SubTable 
+  {
    public:
     // Note: Contour is an empty class for the version ported
     class Contour {
@@ -45,7 +47,8 @@ class GlyphTable : public SubTableContainerTable,
       virtual ~Contour() {}
     };
 
-    class Builder : public SubTable::Builder {
+    class Builder : public SubTable::Builder 
+	{
      public:
       virtual ~Builder();
 
@@ -198,6 +201,11 @@ class GlyphTable : public SubTableContainerTable,
     virtual int32_t InstructionSize();
     virtual CALLER_ATTACH ReadableFontData* Instructions();
     virtual void Initialize();
+
+	virtual int32_t numberOfPoints(int32_t contour);
+	virtual int32_t xCoordinate(int32_t contour, int32_t point);
+	virtual int32_t yCoordinate(int32_t contour, int32_t point);
+	virtual bool onCurve(int32_t contour, int32_t point);
 
    private:
     void ParseData(bool fill_arrays);

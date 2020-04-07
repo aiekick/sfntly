@@ -337,7 +337,9 @@ int32_t GlyphTable::Glyph::Builder::SubSerialize(WritableFontData* new_data) {
  * GlyphTable::SimpleGlyph
  ******************************************************************************/
 GlyphTable::SimpleGlyph::SimpleGlyph(ReadableFontData* data)
-    : GlyphTable::Glyph(data, GlyphType::kSimple), initialized_(false) {
+    : GlyphTable::Glyph(data, GlyphType::kSimple), initialized_(false) 
+{
+
 }
 
 GlyphTable::SimpleGlyph::~SimpleGlyph() {
@@ -399,6 +401,34 @@ void GlyphTable::SimpleGlyph::Initialize() {
     (y_byte_count_ * DataSize::kBYTE);
   set_padding(DataLength() - non_padded_data_length);
   initialized_ = true;
+}
+
+int32_t GlyphTable::SimpleGlyph::numberOfPoints(int32_t contour)
+{
+	Initialize();
+	if (contour >= NumberOfContours())
+	{
+		return 0;
+	}
+	return contour_index_[contour + 1] - contour_index_[contour];
+}
+
+int32_t GlyphTable::SimpleGlyph::xCoordinate(int32_t contour, int32_t point)
+{
+	Initialize();
+	return x_coordinates_[contour_index_[contour] + point];
+}
+
+int32_t GlyphTable::SimpleGlyph::yCoordinate(int32_t contour, int32_t point)
+{
+	Initialize();
+	return y_coordinates_[contour_index_[contour] + point];
+}
+
+bool GlyphTable::SimpleGlyph::onCurve(int32_t contour, int32_t point)
+{
+	Initialize();
+	return on_curve_[contour_index_[contour] + point];
 }
 
 void GlyphTable::SimpleGlyph::ParseData(bool fill_arrays) {
