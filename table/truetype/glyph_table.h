@@ -227,6 +227,7 @@ class GlyphTable : public SubTableContainerTable,
     int32_t x_byte_count_;
     int32_t y_byte_count_;
 
+  public:
     std::vector<int32_t> x_coordinates_;
     std::vector<int32_t> y_coordinates_;
     std::vector<bool> on_curve_;
