@@ -353,7 +353,7 @@ int32_t GlyphTable::SimpleGlyph::InstructionSize() {
 CALLER_ATTACH ReadableFontData* GlyphTable::SimpleGlyph::Instructions() {
   Initialize();
   return down_cast<ReadableFontData*>(
-             data_->Slice(instructions_offset_, InstructionSize()));
+             data_->Slice(instructions_offset_, instruction_size_));
 }
 
 void GlyphTable::SimpleGlyph::Initialize() {
@@ -380,6 +380,8 @@ void GlyphTable::SimpleGlyph::Initialize() {
   number_of_points_ = ContourEndPoint(NumberOfContours() - 1) + 1;
   x_coordinates_.resize(number_of_points_);
   y_coordinates_.resize(number_of_points_);
+  x_OrginalCoordDatas.resize(number_of_points_);// aiekick
+  y_OrginalCoordDatas.resize(number_of_points_);// aiekick
   on_curve_.resize(number_of_points_);
   ParseData(false);
   x_coordinates_offset_ = flags_offset_ + flag_byte_count_ * DataSize::kBYTE;
@@ -431,6 +433,42 @@ bool GlyphTable::SimpleGlyph::onCurve(int32_t contour, int32_t point)
 	return on_curve_[contour_index_[contour] + point];
 }
 
+int32_t GlyphTable::SimpleGlyph::xByteCount()
+{
+	Initialize();
+	return x_byte_count_;
+}
+
+int32_t GlyphTable::SimpleGlyph::yByteCount()
+{
+	Initialize();
+	return y_byte_count_;
+}
+
+int32_t GlyphTable::SimpleGlyph::xCoordOffset()
+{
+	Initialize();
+	return x_coordinates_offset_;
+}
+
+int32_t GlyphTable::SimpleGlyph::yCoordOffset()
+{
+	Initialize();
+	return y_coordinates_offset_;
+}
+
+std::vector<std::pair<int32_t, int32_t>> GlyphTable::SimpleGlyph::xOrginalCoordDatas()
+{
+	Initialize();
+	return x_OrginalCoordDatas;
+}
+
+std::vector<std::pair<int32_t, int32_t>> GlyphTable::SimpleGlyph::yOrginalCoordDatas()
+{
+	Initialize();
+	return y_OrginalCoordDatas;
+}
+
 void GlyphTable::SimpleGlyph::ParseData(bool fill_arrays) {
   int32_t flag = 0;
   int32_t flag_repeat = 0;
@@ -460,8 +498,10 @@ void GlyphTable::SimpleGlyph::ParseData(bool fill_arrays) {
       if (fill_arrays) {
         x_coordinates_[point_index] =
             data_->ReadUByte(x_coordinates_offset_ + x_byte_index);
+		x_OrginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(1, x_coordinates_[point_index]);
         x_coordinates_[point_index] *=
             ((flag & kFLAG_XREPEATSIGN) == kFLAG_XREPEATSIGN) ? 1 : -1;
+
       }
       x_byte_index++;
     } else {
@@ -470,20 +510,22 @@ void GlyphTable::SimpleGlyph::ParseData(bool fill_arrays) {
         if (fill_arrays) {
           x_coordinates_[point_index] =
             data_->ReadShort(x_coordinates_offset_ + x_byte_index);
-        }
+		  x_OrginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(2, x_coordinates_[point_index]);
+		}
         x_byte_index += 2;
       }
     }
     if (fill_arrays && point_index > 0) {
-      x_coordinates_[point_index] += x_coordinates_[point_index - 1];
-    }
+		x_coordinates_[point_index] += x_coordinates_[point_index - 1];
+	}
 
     // get the y coordinate
     if ((flag & kFLAG_YSHORT) == kFLAG_YSHORT) {
       if (fill_arrays) {
-        y_coordinates_[point_index] =
-          data_->ReadUByte(y_coordinates_offset_ + y_byte_index);
-        y_coordinates_[point_index] *=
+		y_coordinates_[point_index] = 
+		  data_->ReadUByte(y_coordinates_offset_ + y_byte_index);
+		y_OrginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(1, y_coordinates_[point_index]);
+		y_coordinates_[point_index] *=
           ((flag & kFLAG_YREPEATSIGN) == kFLAG_YREPEATSIGN) ? 1 : -1;
       }
       y_byte_index++;
@@ -492,13 +534,14 @@ void GlyphTable::SimpleGlyph::ParseData(bool fill_arrays) {
         if (fill_arrays) {
           y_coordinates_[point_index] =
             data_->ReadShort(y_coordinates_offset_ + y_byte_index);
-        }
+		  y_OrginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(2, y_coordinates_[point_index]);
+		}
         y_byte_index += 2;
       }
     }
     if (fill_arrays && point_index > 0) {
-      y_coordinates_[point_index] += y_coordinates_[point_index - 1];
-    }
+		y_coordinates_[point_index] += y_coordinates_[point_index - 1];
+	}
   }
   flag_byte_count_ = flag_index;
   x_byte_count_ = x_byte_index;
