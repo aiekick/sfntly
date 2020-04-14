@@ -209,16 +209,19 @@ class GlyphTable : public SubTableContainerTable,
 
 	virtual int32_t xByteCount();
 	virtual int32_t yByteCount();
+	virtual int32_t flagOffset();
 	virtual int32_t xCoordOffset();
 	virtual int32_t yCoordOffset();
-	virtual std::vector<std::pair<int32_t, int32_t>>  xOrginalCoordDatas();
-	virtual std::vector<std::pair<int32_t, int32_t>>  yOrginalCoordDatas();
+	virtual std::vector<std::pair<int32_t, int32_t>> xOrginalCoordDatas();
+	virtual std::vector<std::pair<int32_t, int32_t>> yOrginalCoordDatas();
+	virtual std::vector<std::pair<int32_t, int32_t>> OriginalFlags();
 
-   private:
+	int32_t FlagAsInt(int32_t index);
+	int32_t ContourEndPoint(int32_t contour);
+  
+  private:
     void ParseData(bool fill_arrays);
-    int32_t FlagAsInt(int32_t index);
-    int32_t ContourEndPoint(int32_t contour);
-
+    
     bool initialized_;
     Lock initialization_lock_;
     int32_t instruction_size_;
@@ -234,9 +237,11 @@ class GlyphTable : public SubTableContainerTable,
     int32_t x_byte_count_;
     int32_t y_byte_count_;
 
+	// point_index, flag
+	std::vector<std::pair<int32_t, int32_t>> _OriginalFlags;
 	// countbytes, value
-	std::vector<std::pair<int32_t, int32_t>> x_OrginalCoordDatas;
-	std::vector<std::pair<int32_t, int32_t>> y_OrginalCoordDatas;
+	std::vector<std::pair<int32_t, int32_t>> x_OriginalCoordDatas;
+	std::vector<std::pair<int32_t, int32_t>> y_OriginalCoordDatas;
 
     std::vector<int32_t> x_coordinates_;
     std::vector<int32_t> y_coordinates_;
