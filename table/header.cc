@@ -53,13 +53,13 @@ Header::Header(int32_t tag, int64_t checksum, int32_t offset, int32_t length)
 
 Header::~Header() {}
 
-bool HeaderComparatorByOffset::operator() (const HeaderPtr lhs,
-                                           const HeaderPtr rhs) {
+bool HeaderComparatorByOffset::operator() (HeaderPtr lhs,
+                                           HeaderPtr rhs) {
   return lhs->offset_ > rhs->offset_;
 }
 
-bool HeaderComparatorByTag::operator() (const HeaderPtr lhs,
-                                        const HeaderPtr rhs) {
+bool HeaderComparatorByTag::operator() (HeaderPtr lhs,
+                                        HeaderPtr rhs) {
   return lhs->tag_ > rhs->tag_;
 }
 

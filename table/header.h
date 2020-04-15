@@ -88,22 +88,22 @@ typedef Ptr<Header> HeaderPtr;
 class HeaderComparator {
  public:
   virtual ~HeaderComparator() {}
-  virtual bool operator()(const HeaderPtr h1,
-                          const HeaderPtr h2) = 0;
+  virtual bool operator()(HeaderPtr h1,
+                          HeaderPtr h2) = 0;
 };
 
 class HeaderComparatorByOffset : public HeaderComparator {
  public:
   virtual ~HeaderComparatorByOffset() {}
-  virtual bool operator()(const HeaderPtr h1,
-                          const HeaderPtr h2);
+  virtual bool operator()(HeaderPtr h1,
+                          HeaderPtr h2);
 };
 
 class HeaderComparatorByTag : public HeaderComparator {
  public:
   virtual ~HeaderComparatorByTag() {}
-  virtual bool operator()(const HeaderPtr h1,
-                          const HeaderPtr h2);
+  virtual bool operator()(HeaderPtr h1,
+                          HeaderPtr h2);
 };
 
 typedef std::set<HeaderPtr, HeaderComparatorByOffset> HeaderOffsetSortedSet;
