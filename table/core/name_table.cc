@@ -477,7 +477,9 @@ void NameTable::NameAsBytes(int32_t index, std::vector<uint8_t>* b) {
 
   int32_t offset = NameOffset(index);
   if (offset < 0)
-    return;  b->resize(length);
+    return;
+
+  b->resize(length);
   data_->ReadBytes(offset, &((*b)[0]), 0, length);
 }
 
@@ -670,8 +672,8 @@ inline std::wstring string_to_wstring(const std::string mbstr)
 }
 
 void NameTable::ConvertToNameBytes(const wchar_t* name,
-	int32_t platform_id,
-	int32_t encoding_id,
+	int32_t /*platform_id*/,
+	int32_t /*encoding_id*/,
 	std::vector<uint8_t>* b)
 {
 	assert(b);
@@ -686,8 +688,8 @@ void NameTable::ConvertToNameBytes(const wchar_t* name,
 }
 
 wchar_t* NameTable::ConvertFromNameBytes(std::vector<uint8_t>* name_bytes,
-	int32_t platform_id,
-	int32_t encoding_id)
+	int32_t /*platform_id*/,
+	int32_t /*encoding_id*/)
 {
 	if (name_bytes == NULL || name_bytes->size() == 0)
 	{
