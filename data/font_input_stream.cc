@@ -34,7 +34,7 @@ FontInputStream::~FontInputStream() {
 
 int32_t FontInputStream::Length() {
   if (bounded_)
-    return length_;
+    return (int32_t)length_;
   if (stream_)
     return stream_->Length();
   return 0;
