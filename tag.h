@@ -39,6 +39,10 @@ struct Tag {
   static const int32_t OS_2;
   static const int32_t post;
 
+  // TrueType Color Glyphs
+  static const int32_t COLR;
+  static const int32_t CPAL;
+
   // TrueType outline tables
   static const int32_t cvt;
   static const int32_t fpgm;
