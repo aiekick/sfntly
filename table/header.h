@@ -89,21 +89,21 @@ class HeaderComparator {
  public:
   virtual ~HeaderComparator() {}
   virtual bool operator()(HeaderPtr h1,
-                          HeaderPtr h2) = 0;
+                          HeaderPtr h2) const = 0;
 };
 
 class HeaderComparatorByOffset : public HeaderComparator {
  public:
   virtual ~HeaderComparatorByOffset() {}
   virtual bool operator()(HeaderPtr h1,
-                          HeaderPtr h2);
+                          HeaderPtr h2) const;
 };
 
 class HeaderComparatorByTag : public HeaderComparator {
  public:
   virtual ~HeaderComparatorByTag() {}
   virtual bool operator()(HeaderPtr h1,
-                          HeaderPtr h2);
+                          HeaderPtr h2) const;
 };
 
 typedef std::set<HeaderPtr, HeaderComparatorByOffset> HeaderOffsetSortedSet;
