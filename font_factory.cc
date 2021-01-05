@@ -205,7 +205,7 @@ bool FontFactory::IsCollection(PushbackInputStream* pbis) {
 
 bool FontFactory::IsCollection(ReadableFontData* rfd) {
   std::vector<uint8_t> tag(4);
-  rfd->ReadBytes(0, &(tag[0]), 0, tag.size());
+  rfd->ReadBytes(0, &(tag[0]), 0, (int32_t)tag.size());
   return Tag::ttcf ==
          GenerateTag(tag[0], tag[1], tag[2], tag[3]);
 }

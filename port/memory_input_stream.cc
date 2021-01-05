@@ -38,11 +38,11 @@ MemoryInputStream::~MemoryInputStream() {
 }
 
 int32_t MemoryInputStream::Length() {
-  return length_;
+  return (int32_t)length_;
 }
 
 int32_t MemoryInputStream::Available() {
-  return length_ - position_;
+  return (int32_t)(length_ - position_);
 }
 
 void MemoryInputStream::Close() {
@@ -75,7 +75,7 @@ int32_t MemoryInputStream::Read() {
 }
 
 int32_t MemoryInputStream::Read(std::vector<uint8_t>* b) {
-  return Read(b, 0, b->size());
+  return Read(b, 0, (int32_t)b->size());
 }
 
 int32_t MemoryInputStream::Read(std::vector<uint8_t>* b, int32_t offset, int32_t length) {
@@ -98,7 +98,7 @@ int32_t MemoryInputStream::Read(std::vector<uint8_t>* b, int32_t offset, int32_t
   }
   memcpy(&((*b)[offset]), buffer_ + position_, read_count);
   position_ += read_count;
-  return read_count;
+  return (int32_t)read_count;
 }
 
 void MemoryInputStream::Reset() {
@@ -124,7 +124,7 @@ int64_t MemoryInputStream::Skip(int64_t n) {
 }
 
 void MemoryInputStream::Unread(std::vector<uint8_t>* b) {
-  Unread(b, 0, b->size());
+  Unread(b, 0, (int32_t)b->size());
 }
 
 void MemoryInputStream::Unread(std::vector<uint8_t>* b, int32_t offset, int32_t length) {

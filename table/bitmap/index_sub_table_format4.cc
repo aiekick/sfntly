@@ -113,7 +113,7 @@ IndexSubTableFormat4::Builder::~Builder() {
 }
 
 int32_t IndexSubTableFormat4::Builder::NumGlyphs() {
-  return GetOffsetArray()->size() - 1;
+  return (int32_t)(GetOffsetArray()->size() - 1);
 }
 
 int32_t IndexSubTableFormat4::Builder::GlyphLength(int32_t glyph_id) {
@@ -214,8 +214,8 @@ int32_t IndexSubTableFormat4::Builder::SubDataSizeToSerialize() {
     return InternalReadData()->Length();
   }
   return EblcTable::Offset::kIndexSubHeaderLength + DataSize::kULONG +
-         GetOffsetArray()->size() *
-         EblcTable::Offset::kIndexSubTable4_codeOffsetPairLength;
+      (int32_t)(GetOffsetArray()->size() *
+         EblcTable::Offset::kIndexSubTable4_codeOffsetPairLength);
 }
 
 bool IndexSubTableFormat4::Builder::SubReadyToSerialize() {
@@ -310,7 +310,7 @@ int32_t IndexSubTableFormat4::Builder::FindCodeOffsetPair(int32_t glyph_id) {
   std::vector<CodeOffsetPairBuilder>* pair_list = GetOffsetArray();
   int32_t location = 0;
   int32_t bottom = 0;
-  int32_t top = pair_list->size();
+  int32_t top = (int32_t)pair_list->size();
   while (top != bottom) {
     location = (top + bottom) / 2;
     CodeOffsetPairBuilder* pair = &(pair_list->at(location));

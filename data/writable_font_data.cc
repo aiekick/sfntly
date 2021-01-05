@@ -71,7 +71,7 @@ int32_t WritableFontData::WriteBytes(int32_t index,
 
 int32_t WritableFontData::WriteBytes(int32_t index, std::vector<uint8_t>* b) {
   assert(b);
-  return WriteBytes(index, &((*b)[0]), 0, b->size());
+  return WriteBytes(index, &((*b)[0]), 0, (int32_t)b->size());
 }
 
 int32_t WritableFontData::WriteBytesPad(int32_t index,
@@ -84,7 +84,7 @@ int32_t WritableFontData::WriteBytesPad(int32_t index,
                   &((*b)[0]),
                   offset,
                   BoundLength(index,
-                              std::min<int32_t>(length, b->size() - offset)));
+                              std::min<int32_t>(length, (int32_t)b->size() - offset)));
   written += WritePadding(written + index, length - written, pad);
   return written;
 }

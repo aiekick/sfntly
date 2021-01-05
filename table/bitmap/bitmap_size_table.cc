@@ -154,7 +154,7 @@ IndexSubTable* BitmapSizeTable::BinarySearchIndexSubTables(int32_t glyph_id) {
   IndexSubTableList* subtable_list = GetIndexSubTableList();
   int32_t index = 0;
   int32_t bottom = 0;
-  int32_t top = subtable_list->size();
+  int32_t top = (int32_t)subtable_list->size();
   while (top != bottom) {
     index = (top + bottom) / 2;
     IndexSubTable* subtable = (*subtable_list)[index];
@@ -240,7 +240,7 @@ bool BitmapSizeTable::Builder::SubReadyToSerialize() {
 }
 
 int32_t BitmapSizeTable::Builder::SubSerialize(WritableFontData* new_data) {
-  SetNumberOfIndexSubTables(IndexSubTableBuilders()->size());
+  SetNumberOfIndexSubTables((int32_t)IndexSubTableBuilders()->size());
   int32_t size = InternalReadData()->CopyTo(new_data);
   return size;
 }
@@ -282,7 +282,7 @@ void BitmapSizeTable::Builder::SetIndexTableSize(int32_t size) {
 }
 
 int32_t BitmapSizeTable::Builder::NumberOfIndexSubTables() {
-  return GetIndexSubTableBuilders()->size();
+  return (int32_t)GetIndexSubTableBuilders()->size();
 }
 
 int32_t BitmapSizeTable::Builder::ColorRef() {
@@ -431,7 +431,7 @@ IndexSubTable::Builder* BitmapSizeTable::Builder::BinarySearchIndexSubTables(
   IndexSubTableBuilderList* subtable_list = GetIndexSubTableBuilders();
   int32_t index = 0;
   int32_t bottom = 0;
-  int32_t top = subtable_list->size();
+  int32_t top = (int32_t)subtable_list->size();
   while (top != bottom) {
     index = (top + bottom) / 2;
     IndexSubTable::Builder* subtable = subtable_list->at(index);

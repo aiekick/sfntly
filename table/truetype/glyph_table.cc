@@ -622,7 +622,7 @@ int32_t GlyphTable::CompositeGlyph::Flags(int32_t contour) {
 }
 
 int32_t GlyphTable::CompositeGlyph::NumGlyphs() {
-  return contour_index_.size();
+  return (int32_t)contour_index_.size();
 }
 
 int32_t GlyphTable::CompositeGlyph::GlyphIndex(int32_t contour) {

@@ -74,7 +74,7 @@ IndexSubTableFormat1::Builder::~Builder() {
 }
 
 int32_t IndexSubTableFormat1::Builder::NumGlyphs() {
-  return GetOffsetArray()->size() - 1;
+  return (int32_t)GetOffsetArray()->size() - 1;
 }
 
 int32_t IndexSubTableFormat1::Builder::GlyphLength(int32_t glyph_id) {
@@ -168,7 +168,7 @@ int32_t IndexSubTableFormat1::Builder::SubDataSizeToSerialize() {
     return InternalReadData()->Length();
   }
   return EblcTable::Offset::kIndexSubHeaderLength +
-         offset_array_.size() * DataSize::kULONG;
+      (int32_t)(offset_array_.size() * DataSize::kULONG);
 }
 
 bool IndexSubTableFormat1::Builder::SubReadyToSerialize() {

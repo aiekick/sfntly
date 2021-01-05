@@ -40,7 +40,7 @@ ReadableFontData::~ReadableFontData() {}
 CALLER_ATTACH
 ReadableFontData* ReadableFontData::CreateReadableFontData(std::vector<uint8_t>* b) {
   assert(b);
-  ByteArrayPtr ba = new MemoryByteArray(b->size());
+  ByteArrayPtr ba = new MemoryByteArray((int32_t)b->size());
   ba->Put(0, b);
   ReadableFontDataPtr wfd = new ReadableFontData(ba);
   return wfd.Detach();

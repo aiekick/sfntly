@@ -154,7 +154,7 @@ void LocaTable::Builder::Revert() {
 }
 
 int32_t LocaTable::Builder::NumLocas() {
-  return GetLocaList()->size();
+  return (int32_t)GetLocaList()->size();
 }
 
 int32_t LocaTable::Builder::Loca(int32_t index) {
@@ -177,9 +177,9 @@ int32_t LocaTable::Builder::SubDataSizeToSerialize() {
     return 0;
   }
   if (format_version_ == IndexToLocFormat::kLongOffset) {
-    return loca_.size() * DataSize::kULONG;
+    return (int32_t)(loca_.size() * DataSize::kULONG);
   }
-  return loca_.size() * DataSize::kUSHORT;
+  return (int32_t)(loca_.size() * DataSize::kUSHORT);
 }
 
 bool LocaTable::Builder::SubReadyToSerialize() {
@@ -196,7 +196,7 @@ int32_t LocaTable::Builder::SubSerialize(WritableFontData* new_data) {
       size += new_data->WriteUShort(size, *l / 2);
     }
   }
-  num_glyphs_ = loca_.size() - 1;
+  num_glyphs_ = (int32_t)loca_.size() - 1;
   return size;
 }
 
@@ -230,7 +230,7 @@ int32_t LocaTable::Builder::CheckGlyphRange(int32_t glyph_id) {
 }
 
 int32_t LocaTable::Builder::LastGlyphIndex() {
-  return !loca_.empty() ? loca_.size() - 2 : num_glyphs_ - 1;
+  return !loca_.empty() ? (int32_t)loca_.size() - 2 : num_glyphs_ - 1;
 }
 
 std::vector<int32_t>* LocaTable::Builder::GetLocaList() {

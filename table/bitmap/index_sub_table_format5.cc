@@ -91,7 +91,7 @@ IndexSubTableFormat5::Builder::~Builder() {
 }
 
 int32_t IndexSubTableFormat5::Builder::NumGlyphs() {
-  return GetGlyphArray()->size();
+  return (int32_t)GetGlyphArray()->size();
 }
 
 int32_t IndexSubTableFormat5::Builder::GlyphLength(int32_t glyph_id) {
@@ -111,7 +111,7 @@ int32_t IndexSubTableFormat5::Builder::GlyphStartOffset(int32_t glyph_id) {
   if (it == glyph_array->end()) {
     return -1;
   }
-  return (it - glyph_array->begin()) * ImageSize();
+  return (int32_t)((it - glyph_array->begin()) * ImageSize());
 }
 
 CALLER_ATTACH IndexSubTableFormat5::Builder::BitmapGlyphInfoIterator*
@@ -187,7 +187,7 @@ int32_t IndexSubTableFormat5::Builder::SubDataSizeToSerialize() {
     return InternalReadData()->Length();
   }
   return EblcTable::Offset::kIndexSubTable5_builderDataSize +
-         glyph_array_.size() * DataSize::kUSHORT;
+      (int32_t)(glyph_array_.size() * DataSize::kUSHORT);
 }
 
 bool IndexSubTableFormat5::Builder::SubReadyToSerialize() {

@@ -39,7 +39,7 @@ int32_t ByteArray::Get(int32_t index) {
 
 int32_t ByteArray::Get(int32_t index, std::vector<uint8_t>* b) {
   assert(b);
-  return Get(index, &((*b)[0]), 0, b->size());
+  return Get(index, &((*b)[0]), 0, (int32_t)b->size());
 }
 
 int32_t ByteArray::Get(int32_t index,
@@ -72,7 +72,7 @@ void ByteArray::Put(int32_t index, uint8_t b) {
 
 int32_t ByteArray::Put(int index, std::vector<uint8_t>* b) {
   assert(b);
-  return Put(index, &((*b)[0]), 0, b->size());
+  return Put(index, &((*b)[0]), 0, (int32_t)b->size());
 }
 
 int32_t ByteArray::Put(int32_t index,
@@ -120,7 +120,7 @@ int32_t ByteArray::CopyTo(int32_t dst_offset, ByteArray* array,
     UNREFERENCED_PARAMETER(bytes_written);
     index += bytes_read;
     remaining_length -= bytes_read;
-    buffer_length = std::min<int32_t>(b.size(), remaining_length);
+    buffer_length = std::min<int32_t>((int32_t)b.size(), remaining_length);
   }
   return index;
 }
@@ -137,7 +137,7 @@ int32_t ByteArray::CopyTo(OutputStream* os, int32_t offset, int32_t length) {
   while ((bytes_read = Get(index + offset, &(b[0]), 0, buffer_length)) > 0) {
     os->Write(&b, 0, bytes_read);
     index += bytes_read;
-    buffer_length = std::min<int32_t>(b.size(), length - index);
+    buffer_length = std::min<int32_t>((int32_t)b.size(), length - index);
   }
   return index;
 }
@@ -157,7 +157,7 @@ bool ByteArray::CopyFrom(InputStream* is, int32_t length) {
     }
     index += bytes_read;
     length -= bytes_read;
-    buffer_length = std::min<int32_t>(b.size(), length);
+    buffer_length = std::min<int32_t>((int32_t)b.size(), length);
   }
   return true;
 }

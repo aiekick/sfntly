@@ -481,7 +481,7 @@ void OS2Table::Builder::SetAchVendId(std::vector<uint8_t>* b) {
   InternalWriteData()->WriteBytesPad(Offset::kAchVendId,
                                      b,
                                      0,
-                                     std::min<size_t>(
+                                     (int32_t)std::min<size_t>(
                                          (size_t)Offset::kAchVendIdLength,
                                          b->size()),
                                      static_cast<uint8_t>(' '));

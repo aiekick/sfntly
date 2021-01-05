@@ -1046,9 +1046,9 @@ int32_t CMapTable::CMapFormat4::Builder::SubDataSizeToSerialize() {
   if (!model_changed()) {
     return CMap::Builder::SubDataSizeToSerialize();
   }
-  int32_t size = Offset::kFormat4FixedSize + segments_.size()
+  int32_t size = Offset::kFormat4FixedSize + (int32_t)segments_.size()
       * (3 * DataSize::kUSHORT + DataSize::kSHORT)
-      + glyph_id_array_.size() * DataSize::kSHORT;
+      + (int32_t)(glyph_id_array_.size() * DataSize::kSHORT);
   return size;
 }
 
@@ -1072,7 +1072,7 @@ CMapTable::CMapFormat4::Builder::SubSerialize(WritableFontData* new_data) {
   index += DataSize::kUSHORT;  // length - write this at the end
   index += new_data->WriteUShort(index, language());
 
-  int32_t seg_count = segments_.size();
+  int32_t seg_count = (int32_t)segments_.size();
   index += new_data->WriteUShort(index, seg_count * 2);
   int32_t log2_seg_count = FontMath::Log2(seg_count);
   int32_t search_range = 1 << (log2_seg_count + 1);
@@ -1128,10 +1128,10 @@ int32_t CMapTable::Builder::SubSerialize(WritableFontData* new_data) {
   int32_t size = new_data->WriteUShort(CMapTable::Offset::kVersion,
                                        version_);
   size += new_data->WriteUShort(CMapTable::Offset::kNumTables,
-                                GetCMapBuilders()->size());
+      (int32_t)GetCMapBuilders()->size());
 
   int32_t index_offset = size;
-  size += GetCMapBuilders()->size() * CMapTable::Offset::kEncodingRecordSize;
+  size += (int32_t)(GetCMapBuilders()->size() * CMapTable::Offset::kEncodingRecordSize);
   for (CMapBuilderMap::iterator it = GetCMapBuilders()->begin(),
            e = GetCMapBuilders()->end(); it != e; ++it) {
     CMapBuilderPtr b = it->second;
@@ -1167,7 +1167,7 @@ int32_t CMapTable::Builder::SubDataSizeToSerialize() {
 
   bool variable = false;
   int32_t size = CMapTable::Offset::kEncodingRecordStart +
-      GetCMapBuilders()->size() * CMapTable::Offset::kEncodingRecordSize;
+      (int32_t)(GetCMapBuilders()->size() * CMapTable::Offset::kEncodingRecordSize);
 
   // calculate size of each table
   for (CMapBuilderMap::iterator it = GetCMapBuilders()->begin(),
@@ -1228,7 +1228,7 @@ int32_t CMapTable::Builder::NumCMaps(ReadableFontData* data) {
 }
 
 int32_t CMapTable::Builder::NumCMaps() {
-  return GetCMapBuilders()->size();
+  return (int32_t)GetCMapBuilders()->size();
 }
 
 void CMapTable::Builder::Initialize(ReadableFontData* data) {

@@ -96,7 +96,7 @@ int32_t FontInputStream::Read(std::vector<uint8_t>* b, int32_t offset, int32_t l
 }
 
 int32_t FontInputStream::Read(std::vector<uint8_t>* b) {
-  return Read(b, 0, b->size());
+  return Read(b, 0, (int32_t)b->size());
 }
 
 int32_t FontInputStream::ReadChar() {

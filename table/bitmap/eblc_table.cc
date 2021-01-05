@@ -107,7 +107,7 @@ int32_t EblcTable::Builder::SubSerialize(WritableFontData* new_data) {
   int32_t size_table_offset = size_table_start_offset;
   // offset to the start of the whole index subtable block
   int32_t sub_table_block_start_offset = size_table_offset +
-      size_table_builders_.size() * Offset::kBitmapSizeTableLength;
+      (int32_t)(size_table_builders_.size() * Offset::kBitmapSizeTableLength);
   // walking offset in the index subtable
   // points to the start of the current subtable block
   int32_t current_sub_table_block_start_offset = sub_table_block_start_offset;
@@ -128,7 +128,7 @@ int32_t EblcTable::Builder::SubSerialize(WritableFontData* new_data) {
     int32_t index_sub_table_array_offset = current_sub_table_block_start_offset;
     // walking offset within the subTable entries
     int32_t index_sub_table_offset = index_sub_table_array_offset +
-        index_sub_table_builder_list->size() * Offset::kIndexSubHeaderLength;
+        (int32_t)(index_sub_table_builder_list->size() * Offset::kIndexSubHeaderLength);
 
 #if defined (SFNTLY_DEBUG_BITMAP)
     fprintf(stderr, "size %d: sizeTable=%x, current subTable Block=%x, ",

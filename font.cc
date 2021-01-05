@@ -119,12 +119,12 @@ void Font::BuildTableHeadersForSerialization(std::vector<int32_t>* table_orderin
 void Font::SerializeHeader(FontOutputStream* fos,
                            TableHeaderList* table_headers) {
   fos->WriteFixed(sfnt_version_);
-  fos->WriteUShort(table_headers->size());
-  int32_t log2_of_max_power_of_2 = FontMath::Log2(table_headers->size());
+  fos->WriteUShort((int32_t)table_headers->size());
+  int32_t log2_of_max_power_of_2 = FontMath::Log2((int32_t)table_headers->size());
   int32_t search_range = 2 << (log2_of_max_power_of_2 - 1 + 4);
   fos->WriteUShort(search_range);
   fos->WriteUShort(log2_of_max_power_of_2);
-  fos->WriteUShort((table_headers->size() * 16) - search_range);
+  fos->WriteUShort((int32_t)(table_headers->size() * 16) - search_range);
 
   HeaderTagSortedSet sorted_headers;
   std::copy(table_headers->begin(),
@@ -343,7 +343,7 @@ void Font::Builder::LoadFont(WritableFontData* wfd,
 
 int32_t Font::Builder::SfntWrapperSize() {
   return Offset::kSfntHeaderSize +
-         (Offset::kTableRecordSize * table_builders_.size());
+         (Offset::kTableRecordSize * (int32_t)table_builders_.size());
 }
 
 void Font::Builder::BuildAllTableBuilders(DataBlockMap* table_data,

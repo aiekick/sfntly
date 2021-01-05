@@ -103,7 +103,7 @@ std::vector<uint8_t>* NameTable::NameEntry::NameAsBytes() {
 }
 
 int32_t NameTable::NameEntry::NameBytesLength() {
-  return name_bytes_.size();
+  return (int32_t)name_bytes_.size();
 }
 
 wchar_t* NameTable::NameEntry::Name() {
@@ -349,7 +349,7 @@ int32_t NameTable::Builder::SubDataSizeToSerialize() {
   }
 
   int32_t size = NameTable::Offset::kNameRecordStart +
-                 name_entry_map_.size() * NameTable::Offset::kNameRecordSize;
+      (int32_t)(name_entry_map_.size() * NameTable::Offset::kNameRecordSize);
   for (NameEntryBuilderMap::iterator b = name_entry_map_.begin(),
                                      end = name_entry_map_.end();
                                      b != end; ++b) {
@@ -367,11 +367,11 @@ bool NameTable::Builder::SubReadyToSerialize() {
 int32_t NameTable::Builder::SubSerialize(WritableFontData* new_data) {
   int32_t string_table_start_offset =
       NameTable::Offset::kNameRecordStart +
-      name_entry_map_.size() * NameTable::Offset::kNameRecordSize;
+      (int32_t)(name_entry_map_.size() * NameTable::Offset::kNameRecordSize);
 
   // Header
   new_data->WriteUShort(NameTable::Offset::kFormat, 0);
-  new_data->WriteUShort(NameTable::Offset::kCount, name_entry_map_.size());
+  new_data->WriteUShort(NameTable::Offset::kCount, (int32_t)name_entry_map_.size());
   new_data->WriteUShort(NameTable::Offset::kStringOffset,
                         string_table_start_offset);
   int32_t name_record_offset = NameTable::Offset::kNameRecordStart;
@@ -650,25 +650,39 @@ const char* NameTable::GetEncodingName(int32_t platform_id,
 }*/
 
 // https://github.com/aiekick/cTools
+// std::wstring to std::string
+// std::wstring(unicode/multibytes/char16/wchar_t) to std::string(char)
 inline std::string wstring_to_string(const std::wstring wstr)
 {
-	std::mbstate_t state = std::mbstate_t();
-	std::size_t len = wstr.size();
-	std::vector<char> mbstr(len);
-	const wchar_t * wptr = wstr.c_str();
-	std::wcsrtombs(&mbstr[0], &wptr, mbstr.size(), &state);
-	return std::string(mbstr.data(), mbstr.size());
+    std::mbstate_t state = std::mbstate_t();
+    std::size_t len = wstr.size();
+    std::vector<char> mbstr(len);
+    const wchar_t* wptr = wstr.c_str();
+#ifdef MSVC
+    size_t res = 0;
+    /*errno_t err = */wcsrtombs_s(&res, &mbstr[0], len, &wptr, mbstr.size(), &state);
+#else
+    std::wcsrtombs(&mbstr[0], &wptr, mbstr.size(), &state);
+#endif
+    return std::string(mbstr.data(), mbstr.size());
 }
 
 // https://github.com/aiekick/cTools
+// std::string to std::wstring
+// std::string(char) to std::wstring(unicode/multibytes/char16/wchar_t)
 inline std::wstring string_to_wstring(const std::string mbstr)
 {
-	std::mbstate_t state = std::mbstate_t();
-	std::size_t len = mbstr.size();
-	std::vector<wchar_t> wstr(len);
-	const char * ptr = mbstr.c_str();
-	std::mbsrtowcs(&wstr[0], &ptr, wstr.size(), &state);
-	return std::wstring(wstr.data(), wstr.size());
+    std::mbstate_t state = std::mbstate_t();
+    std::size_t len = mbstr.size();
+    std::vector<wchar_t> wstr(len);
+    const char* ptr = mbstr.c_str();
+#ifdef MSVC
+    size_t res = 0;
+    /*errno_t err = */mbsrtowcs_s(&res, &wstr[0], len, &ptr, wstr.size(), &state);
+#else
+    std::mbsrtowcs(&wstr[0], &ptr, wstr.size(), &state);
+#endif
+    return std::wstring(wstr.data(), wstr.size());
 }
 
 void NameTable::ConvertToNameBytes(const wchar_t* name,
@@ -702,7 +716,11 @@ wchar_t* NameTable::ConvertFromNameBytes(std::vector<uint8_t>* name_bytes,
 	//std::wstring ws = myconv.from_bytes(s);
 	std::wstring ws = string_to_wstring(std::string(name_bytes->begin(), name_bytes->end()));
 	wchar_t *cstr = new wchar_t[ws.length() + 1];
-	wcscpy(cstr, ws.c_str());
+#ifdef MSVC
+	wcscpy_s(cstr, ws.length(), ws.c_str());
+#else
+    wcscpy(cstr, ws.c_str());
+#endif
 	return cstr;
 }
 

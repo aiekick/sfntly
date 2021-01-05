@@ -36,11 +36,11 @@ FileInputStream::~FileInputStream() {
 }
 
 int32_t FileInputStream::Length() {
-  return length_;
+  return (int32_t)length_;
 }
 
 int32_t FileInputStream::Available() {
-  return length_ - position_;
+  return (int32_t)(length_ - position_);
 }
 
 void FileInputStream::Close() {
@@ -81,7 +81,7 @@ int32_t FileInputStream::Read() {
 }
 
 int32_t FileInputStream::Read(std::vector<uint8_t>* b) {
-  return Read(b, 0, b->size());
+  return Read(b, 0, (int32_t)b->size());
 }
 
 int32_t FileInputStream::Read(std::vector<uint8_t>* b, int32_t offset, int32_t length) {
@@ -102,7 +102,7 @@ int32_t FileInputStream::Read(std::vector<uint8_t>* b, int32_t offset, int32_t l
   if (b->size() < (size_t)(offset + read_count)) {
     b->resize((size_t)(offset + read_count));
   }
-  int32_t actual_read = fread(&((*b)[offset]), 1, read_count, file_);
+  int32_t actual_read = (int32_t)fread(&((*b)[offset]), 1, read_count, file_);
   position_ += actual_read;
   return actual_read;
 }
@@ -122,17 +122,17 @@ int64_t FileInputStream::Skip(int64_t n) {
   if (n < 0) {  // move backwards
     skip_count = std::max<int64_t>(0 - (int64_t)position_, n);
     position_ -= (size_t)(0 - skip_count);
-    fseek(file_, position_, SEEK_SET);
+    fseek(file_, (long)position_, SEEK_SET);
   } else {
     skip_count = std::min<size_t>(length_ - position_, (size_t)n);
     position_ += (size_t)skip_count;
-    fseek(file_, (size_t)skip_count, SEEK_CUR);
+    fseek(file_, (long)skip_count, SEEK_CUR);
   }
   return skip_count;
 }
 
 void FileInputStream::Unread(std::vector<uint8_t>* b) {
-  Unread(b, 0, b->size());
+  Unread(b, 0, (int32_t)b->size());
 }
 
 void FileInputStream::Unread(std::vector<uint8_t>* b, int32_t offset, int32_t length) {
@@ -145,10 +145,10 @@ void FileInputStream::Unread(std::vector<uint8_t>* b, int32_t offset, int32_t le
     return;
   }
   size_t unread_count = std::min<size_t>(position_, length);
-  fseek(file_, position_ - unread_count, SEEK_SET);
+  fseek(file_, (long)(position_ - unread_count), SEEK_SET);
   position_ -= unread_count;
   Read(b, offset, length);
-  fseek(file_, position_ - unread_count, SEEK_SET);
+  fseek(file_, (long)(position_ - unread_count), SEEK_SET);
   position_ -= unread_count;
 }
 

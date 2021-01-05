@@ -38,7 +38,7 @@ void FontOutputStream::Write(uint8_t b) {
 
 void FontOutputStream::Write(std::vector<uint8_t>* b) {
   if (b) {
-    Write(b, 0, b->size());
+    Write(b, 0, (int32_t)b->size());
     position_ += b->size();
   }
 }
