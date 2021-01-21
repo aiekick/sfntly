@@ -294,7 +294,7 @@ class GlyphTable : public SubTableContainerTable,
     virtual int32_t InstructionSize();
     virtual CALLER_ATTACH ReadableFontData* Instructions();
 
-   protected:
+   //protected:
     virtual void Initialize();
 
    private:
