@@ -356,54 +356,55 @@ CALLER_ATTACH ReadableFontData* GlyphTable::SimpleGlyph::Instructions() {
              data_->Slice(instructions_offset_, instruction_size_));
 }
 
-void GlyphTable::SimpleGlyph::Initialize() {
-  AutoLock lock(initialization_lock_);
-  if (initialized_) {
-    return;
-  }
+void GlyphTable::SimpleGlyph::Initialize()
+{
+    AutoLock lock(initialization_lock_);
+    if (initialized_)
+    {
+        return;
+    }
 
-  if (ReadFontData()->Length() == 0) {
-    instruction_size_ = 0;
-    number_of_points_ = 0;
-    instructions_offset_ = 0;
-    flags_offset_ = 0;
-    x_coordinates_offset_ = 0;
-    y_coordinates_offset_ = 0;
-    return;
-  }
+    if (ReadFontData()->Length() == 0)
+    {
+        instruction_size_ = 0;
+        number_of_points_ = 0;
+        instructions_offset_ = 0;
+        flags_offset_ = 0;
+        x_coordinates_offset_ = 0;
+        y_coordinates_offset_ = 0;
+        return;
+    }
 
-  instruction_size_ = data_->ReadUShort(Offset::kSimpleEndPtsOfCountours +
-      NumberOfContours() * DataSize::kUSHORT);
-  instructions_offset_ = Offset::kSimpleEndPtsOfCountours +
-      (NumberOfContours() + 1) * DataSize::kUSHORT;
-  flags_offset_ = instructions_offset_ + instruction_size_ * DataSize::kBYTE;
-  number_of_points_ = ContourEndPoint(NumberOfContours() - 1) + 1;
-  x_coordinates_.resize(number_of_points_);
-  y_coordinates_.resize(number_of_points_);
-  //_OriginalFlags.resize(number_of_points_);
-  x_OriginalCoordDatas.resize(number_of_points_);// aiekick
-  y_OriginalCoordDatas.resize(number_of_points_);// aiekick
-  on_curve_.resize(number_of_points_);
-  ParseData(false);
-  x_coordinates_offset_ = flags_offset_ + flag_byte_count_ * DataSize::kBYTE;
-  y_coordinates_offset_ = x_coordinates_offset_ + x_byte_count_ *
-      DataSize::kBYTE;
-  contour_index_.resize(NumberOfContours() + 1);
-  contour_index_[0] = 0;
-  for (uint32_t contour = 0; contour < contour_index_.size() - 1; ++contour) {
-    contour_index_[contour + 1] = ContourEndPoint(contour) + 1;
-  }
-  ParseData(true);
-  int32_t non_padded_data_length =
-    5 * DataSize::kSHORT +
-    (NumberOfContours() * DataSize::kUSHORT) +
-    DataSize::kUSHORT +
-    (instruction_size_ * DataSize::kBYTE) +
-    (flag_byte_count_ * DataSize::kBYTE) +
-    (x_byte_count_ * DataSize::kBYTE) +
-    (y_byte_count_ * DataSize::kBYTE);
-  set_padding(DataLength() - non_padded_data_length);
-  initialized_ = true;
+    instruction_size_ = data_->ReadUShort(Offset::kSimpleEndPtsOfCountours + NumberOfContours() * DataSize::kUSHORT);
+    instructions_offset_ = Offset::kSimpleEndPtsOfCountours + (NumberOfContours() + 1) * DataSize::kUSHORT;
+    flags_offset_ = instructions_offset_ + instruction_size_ * DataSize::kBYTE;
+    number_of_points_ = ContourEndPoint(NumberOfContours() - 1) + 1;
+    x_coordinates_.resize(number_of_points_);
+    y_coordinates_.resize(number_of_points_);
+    //_OriginalFlags.resize(number_of_points_);
+    x_OriginalCoordDatas.resize(number_of_points_);// aiekick
+    y_OriginalCoordDatas.resize(number_of_points_);// aiekick
+    on_curve_.resize(number_of_points_);
+    ParseData(false);
+    x_coordinates_offset_ = flags_offset_ + flag_byte_count_ * DataSize::kBYTE;
+    y_coordinates_offset_ = x_coordinates_offset_ + x_byte_count_ * DataSize::kBYTE;
+    contour_index_.resize(NumberOfContours() + 1);
+    contour_index_[0] = 0;
+    for (uint32_t contour = 0; contour < contour_index_.size() - 1; ++contour)
+    {
+        contour_index_[contour + 1] = ContourEndPoint(contour) + 1;
+    }
+    ParseData(true);
+    int32_t non_padded_data_length =
+        5 * DataSize::kSHORT +
+        (NumberOfContours() * DataSize::kUSHORT) +
+        DataSize::kUSHORT +
+        (instruction_size_ * DataSize::kBYTE) +
+        (flag_byte_count_ * DataSize::kBYTE) +
+        (x_byte_count_ * DataSize::kBYTE) +
+        (y_byte_count_ * DataSize::kBYTE);
+    set_padding(DataLength() - non_padded_data_length);
+    initialized_ = true;
 }
 
 int32_t GlyphTable::SimpleGlyph::numberOfPoints(int32_t contour)
@@ -482,91 +483,108 @@ std::vector<std::pair<int32_t, int32_t>> GlyphTable::SimpleGlyph::OriginalFlags(
 	return _OriginalFlags;
 }
 
-void GlyphTable::SimpleGlyph::ParseData(bool fill_arrays) {
-  int32_t flag = 0;
-  int32_t flag_repeat = 0;
-  int32_t flag_index = 0;
-  int32_t x_byte_index = 0;
-  int32_t y_byte_index = 0;
+void GlyphTable::SimpleGlyph::ParseData(bool fill_arrays)
+{
+    int32_t flag = 0;
+    int32_t flag_repeat = 0;
+    int32_t flag_index = 0;
+    int32_t x_byte_index = 0;
+    int32_t y_byte_index = 0;
 
-  _OriginalFlags.clear();
+    _OriginalFlags.clear();
 
-  for (int32_t point_index = 0; point_index < number_of_points_;
-       ++point_index) {
-    // get the flag for the current point
-    if (flag_repeat == 0) 
-	{
-      flag = FlagAsInt(flag_index++);
-	  _OriginalFlags.push_back(std::pair<int32_t, int32_t>(flag, point_index));
-      if ((flag & kFLAG_REPEAT) == kFLAG_REPEAT) 
-	  {
-        flag_repeat = FlagAsInt(flag_index++);
-		_OriginalFlags.push_back(std::pair<int32_t, int32_t>(flag_repeat, -1));
-	  }
-    } 
-	else 
-	{
-      flag_repeat--;
+    for (int32_t point_index = 0; point_index < number_of_points_;
+        ++point_index)
+    {
+        // get the flag for the current point
+        if (flag_repeat == 0)
+        {
+            flag = FlagAsInt(flag_index++);
+            _OriginalFlags.push_back(std::pair<int32_t, int32_t>(flag, point_index));
+            if ((flag & kFLAG_REPEAT) == kFLAG_REPEAT)
+            {
+                flag_repeat = FlagAsInt(flag_index++);
+                _OriginalFlags.push_back(std::pair<int32_t, int32_t>(flag_repeat, -1));
+            }
+        }
+        else
+        {
+            flag_repeat--;
+        }
+
+        // on the curve?
+        if (fill_arrays)
+        {
+            on_curve_[point_index] = ((flag & kFLAG_ONCURVE) == kFLAG_ONCURVE);
+        }
+        // get the x coordinate
+        if ((flag & kFLAG_XSHORT) == kFLAG_XSHORT)
+        {
+            // single byte x coord value
+            if (fill_arrays)
+            {
+                x_coordinates_[point_index] =
+                    data_->ReadUByte(x_coordinates_offset_ + x_byte_index);
+                x_OriginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(1, x_coordinates_[point_index]);
+                x_coordinates_[point_index] *=
+                    ((flag & kFLAG_XREPEATSIGN) == kFLAG_XREPEATSIGN) ? 1 : -1;
+
+            }
+            x_byte_index++;
+        }
+        else
+        {
+            // double byte coord value
+            if (!((flag & kFLAG_XREPEATSIGN) == kFLAG_XREPEATSIGN))
+            {
+                if (fill_arrays)
+                {
+                    x_coordinates_[point_index] =
+                        data_->ReadShort(x_coordinates_offset_ + x_byte_index);
+                    x_OriginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(2, x_coordinates_[point_index]);
+                }
+                x_byte_index += 2;
+            }
+        }
+        if (fill_arrays && point_index > 0)
+        {
+            x_coordinates_[point_index] += x_coordinates_[point_index - 1];
+        }
+
+        // get the y coordinate
+        if ((flag & kFLAG_YSHORT) == kFLAG_YSHORT)
+        {
+            if (fill_arrays)
+            {
+                y_coordinates_[point_index] =
+                    data_->ReadUByte(y_coordinates_offset_ + y_byte_index);
+                y_OriginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(1, y_coordinates_[point_index]);
+                y_coordinates_[point_index] *=
+                    ((flag & kFLAG_YREPEATSIGN) == kFLAG_YREPEATSIGN) ? 1 : -1;
+            }
+            y_byte_index++;
+        }
+        else
+        {
+            if (!((flag & kFLAG_YREPEATSIGN) == kFLAG_YREPEATSIGN))
+            {
+                if (fill_arrays)
+                {
+                    y_coordinates_[point_index] =
+                        data_->ReadShort(y_coordinates_offset_ + y_byte_index);
+                    y_OriginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(2, y_coordinates_[point_index]);
+                }
+                y_byte_index += 2;
+            }
+        }
+        if (fill_arrays && point_index > 0)
+        {
+            y_coordinates_[point_index] += y_coordinates_[point_index - 1];
+        }
     }
-
-    // on the curve?
-    if (fill_arrays) {
-      on_curve_[point_index] = ((flag & kFLAG_ONCURVE) == kFLAG_ONCURVE);
-    }
-    // get the x coordinate
-    if ((flag & kFLAG_XSHORT) == kFLAG_XSHORT) {
-      // single byte x coord value
-      if (fill_arrays) {
-        x_coordinates_[point_index] =
-            data_->ReadUByte(x_coordinates_offset_ + x_byte_index);
-		x_OriginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(1, x_coordinates_[point_index]);
-        x_coordinates_[point_index] *=
-            ((flag & kFLAG_XREPEATSIGN) == kFLAG_XREPEATSIGN) ? 1 : -1;
-
-      }
-      x_byte_index++;
-    } else {
-      // double byte coord value
-      if (!((flag & kFLAG_XREPEATSIGN) == kFLAG_XREPEATSIGN)) {
-        if (fill_arrays) {
-          x_coordinates_[point_index] =
-            data_->ReadShort(x_coordinates_offset_ + x_byte_index);
-		  x_OriginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(2, x_coordinates_[point_index]);
-		}
-        x_byte_index += 2;
-      }
-    }
-    if (fill_arrays && point_index > 0) {
-		x_coordinates_[point_index] += x_coordinates_[point_index - 1];
-	}
-
-    // get the y coordinate
-    if ((flag & kFLAG_YSHORT) == kFLAG_YSHORT) {
-      if (fill_arrays) {
-		y_coordinates_[point_index] = 
-		  data_->ReadUByte(y_coordinates_offset_ + y_byte_index);
-		y_OriginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(1, y_coordinates_[point_index]);
-		y_coordinates_[point_index] *=
-          ((flag & kFLAG_YREPEATSIGN) == kFLAG_YREPEATSIGN) ? 1 : -1;
-      }
-      y_byte_index++;
-    } else {
-      if (!((flag & kFLAG_YREPEATSIGN) == kFLAG_YREPEATSIGN)) {
-        if (fill_arrays) {
-          y_coordinates_[point_index] =
-            data_->ReadShort(y_coordinates_offset_ + y_byte_index);
-		  y_OriginalCoordDatas[point_index] = std::pair<int32_t, int32_t>(2, y_coordinates_[point_index]);
-		}
-        y_byte_index += 2;
-      }
-    }
-    if (fill_arrays && point_index > 0) {
-		y_coordinates_[point_index] += y_coordinates_[point_index - 1];
-	}
-  }
-  flag_byte_count_ = flag_index;
-  x_byte_count_ = x_byte_index;
-  y_byte_count_ = y_byte_index;
+    flag_byte_count_ = flag_index;
+    x_byte_count_ = x_byte_index;
+    y_byte_count_ = y_byte_index;
 }
 
 int32_t GlyphTable::SimpleGlyph::FlagAsInt(int32_t index) {
